@@ -1,0 +1,1 @@
+Drop 4:5 portrait JPG or PNG photos here. One is shown per day, rotating in filename order.
