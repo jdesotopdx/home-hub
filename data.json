@@ -1,4 +1,1 @@
-{"date":"Wednesday, Oct 14","weather":{"temp":"50","cond":"Partly sunny","high":"71","low":"49","rain":"5"},
-"days":[["TODAY","71","49"],["THU","77","51"],["FRI","76","51"],["SAT","63","43"],["SUN","64","42"]],
-"agenda":[["TODAY",[["5:30 PM","P4A D4 Candidate Mixer"]]],["THU 15",[["7:45 PM","Your Mother Your Mother Your Mother"]]],["FRI 16",[]],["SAT 17",[]],["SUN 18",[]]],
-"quote":"Your silence will not protect you.","author":"Audre Lorde","question":"What’s something about me you understand better now than when we met?","refreshed":"2026-10-14"}
+{"date":"Wednesday, Oct 14","greeting":"Good afternoon,","weather":{"temp":"50","cond":"Partly sunny","high":"71","low":"49","rain":"5"},"days":[["TODAY","71","49"],["THU","77","51"],["FRI","76","51"],["SAT","63","43"],["SUN","64","42"]],"j":["Cook dinner tonight","Load dishes","Wipe counters and stovetop"],"b":["Empty dishes","Spare Ruby"],"events":[["0","days","P4A D4 Candidate Mixer","Today 5:30 PM"],["1","day","Your Mother Your Mother Your Mother","Thu 7:45 PM"]],"quote":"Your silence will not protect you.","author":"Audre Lorde","question":"What’s something about me you understand better now than when we met?"}
