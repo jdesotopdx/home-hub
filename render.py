@@ -34,12 +34,27 @@ for i,(dn,hi,lo) in enumerate(D["days"]):
     d.text((x+tw//2,y+100),lo+"°",font=S(28),fill=c if i==0 else 90,anchor="ma")
 # photo of the day (4:5) on the left, five day outlook on the right
 py=462; pw,ph=640,800
+import base64, io
+def load_photo(path):
+    try:
+        if path.lower().endswith(".b64"):
+            raw=base64.b64decode("".join(open(path).read().split()))
+            return ImageOps.exif_transpose(Image.open(io.BytesIO(raw)))
+        return ImageOps.exif_transpose(Image.open(path))
+    except Exception:
+        return None
 def pick():
-    fs=sorted(x for x in os.listdir("photos") if x.lower().endswith((".jpg",".jpeg",".png"))) if os.path.isdir("photos") else []
-    return os.path.join("photos",fs[datetime.date.today().toordinal()%len(fs)]) if fs else None
-p=pick()
+    exts=(".jpg",".jpeg",".png",".jpg.b64",".jpeg.b64",".png.b64")
+    fs=sorted(x for x in os.listdir("photos") if x.lower().endswith(exts)) if os.path.isdir("photos") else []
+    if not fs: return None
+    start=datetime.date.today().toordinal()%len(fs)
+    for k in range(len(fs)):
+        pi=load_photo(os.path.join("photos",fs[(start+k)%len(fs)]))
+        if pi is not None: return pi
+    return None
+pi=pick(); p=pi is not None
 if p:
-    pi=ImageOps.exif_transpose(Image.open(p)).convert("L")
+    pi=pi.convert("L")
     pi=ImageOps.autocontrast(ImageOps.fit(pi,(pw,ph),Image.LANCZOS,centering=(0.5,0.4)),cutoff=1)
     mask=Image.new("L",(pw,ph),0); ImageDraw.Draw(mask).rounded_rectangle((0,0,pw-1,ph-1),radius=18,fill=255)
     im.paste(pi,(M,py),mask); box(M,py,M+pw,py+ph)
