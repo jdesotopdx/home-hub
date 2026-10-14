@@ -32,7 +32,7 @@ for i,(dn,hi,lo) in enumerate(D["days"]):
     d.text((x+tw//2,y+10),dn,font=B(24),fill=c,anchor="ma")
     d.text((x+tw//2,y+44),hi+"°",font=B(52),fill=c,anchor="ma")
     d.text((x+tw//2,y+100),lo+"°",font=S(28),fill=c if i==0 else 90,anchor="ma")
-# photo (4:5) + coming up column
+# photo of the day (4:5) on the left, five day outlook on the right
 py=462; pw,ph=640,800
 def pick():
     fs=sorted(x for x in os.listdir("photos") if x.lower().endswith((".jpg",".jpeg",".png"))) if os.path.isdir("photos") else []
@@ -44,20 +44,35 @@ if p:
     mask=Image.new("L",(pw,ph),0); ImageDraw.Draw(mask).rounded_rectangle((0,0,pw-1,ph-1),radius=18,fill=255)
     im.paste(pi,(M,py),mask); box(M,py,M+pw,py+ph)
 cx=M+pw+24 if p else M
-cwid=W-M-cx
-d.text((cx,py-2),"Coming up",font=B(32),fill=0)
-ev=D["events"][:2]; top=py+50; ch=(ph-50-20)//2
-for i,(n,u,t,when) in enumerate(ev):
-    yy=top+i*(ch+20)
-    box(cx,yy,cx+cwid,yy+ch,r=16)
-    d.rounded_rectangle((cx,yy,cx+cwid,yy+78),radius=16,fill=0)
-    d.rectangle((cx,yy+40,cx+cwid,yy+78),fill=0)
-    d.text((cx+28,yy+8),n,font=B(56),fill=255)
-    d.text((cx+28+d.textlength(n,font=B(56))+14,yy+36),u,font=S(28),fill=255)
-    ft=S(34); ls=wrap(t,ft,cwid-56)
-    for k,l in enumerate(ls[:3]): d.text((cx+28,yy+98+k*46),l,font=ft,fill=0)
-    d.text((cx+28,yy+ch-52),when,font=S(30),fill=90)
-# quote
+def agenda_rows():
+    if "agenda" in D: return D["agenda"][:5]
+    # fallback for the older events format: [count, unit, title, when]
+    return [[e[3].split(" ")[0] if i else "TODAY",[[" ".join(e[3].split(" ")[1:]),e[2]]]] for i,e in enumerate(D.get("events",[])[:5])]
+rows=agenda_rows()
+rh=ph//max(len(rows),1)
+for i,(label,evs) in enumerate(rows):
+    yy=py+i*rh
+    if i: d.line((cx,yy,W-M,yy),fill=170,width=2)
+    lf=B(26); lw=d.textlength(label,font=lf)+28
+    if i==0:
+        d.rounded_rectangle((cx,yy+12,cx+lw,yy+50),radius=10,fill=0); d.text((cx+14,yy+17),label,font=lf,fill=255)
+    else: d.text((cx,yy+17),label,font=lf,fill=0)
+    if not evs:
+        d.text((cx,yy+64),"Nothing on the calendar",font=S(24),fill=150); continue
+    maxl=2 if len(evs)<=2 else 1
+    ey=yy+62
+    for k,(when,title) in enumerate(evs[:3]):
+        tf=S(22); tw_=d.textlength(when,font=tf) if when else 0
+        d.text((cx,ey+4),when,font=tf,fill=110)
+        x0=cx+tw_+(12 if when else 0); avail=W-M-x0; ft=S(27)
+        ls=wrap(title,ft,avail)
+        if len(ls)>maxl:
+            t=title
+            while len(wrap(t,ft,avail))>maxl and len(t)>4: t=t[:-4].rstrip()+"..."
+            ls=wrap(t,ft,avail)[:maxl]
+        for l in ls: d.text((x0,ey),l,font=ft,fill=0); ey+=34
+        ey+=2
+# quote and question
 y=py+ph+24
 box(M,y,W-M,H-30,wd=4,r=22)
 yy=y+26
