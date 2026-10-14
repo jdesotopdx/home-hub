@@ -39,8 +39,10 @@ def load_photo(path):
     try:
         if path.lower().endswith(".b64"):
             raw=base64.b64decode("".join(open(path).read().split()))
-            return ImageOps.exif_transpose(Image.open(io.BytesIO(raw)))
-        return ImageOps.exif_transpose(Image.open(path))
+            im0=Image.open(io.BytesIO(raw)); im0.load()
+            return ImageOps.exif_transpose(im0)
+        im0=Image.open(path); im0.load()
+        return ImageOps.exif_transpose(im0)
     except Exception:
         return None
 def pick():
