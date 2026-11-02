@@ -2,6 +2,13 @@ import json, os, datetime
 from zoneinfo import ZoneInfo
 from PIL import Image, ImageDraw, ImageFont, ImageOps
 D=json.load(open("data.json"))
+# daily quote and its paired question from quotes.json unless data.json supplies them
+try: QB=json.load(open("quotes.json"))
+except Exception: QB=[]
+if QB and not D.get("quote"):
+    _t=datetime.datetime.now(ZoneInfo("America/Los_Angeles")).date()
+    _n=int(datetime.datetime(_t.year,_t.month,_t.day,12,tzinfo=ZoneInfo("America/Los_Angeles")).timestamp()//86400)
+    D["quote"],D["author"],D["question"]=QB[_n%len(QB)]
 W,H=1236,1648
 F="/usr/share/fonts/truetype/dejavu/"
 f=lambda n,s: ImageFont.truetype(F+n,s)
